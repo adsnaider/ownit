@@ -32,7 +32,10 @@ pub fn derive_burrow(item: proc_macro::TokenStream) -> proc_macro::TokenStream {
                 )
                 .into()
             }
-            syn::Fields::Unit => todo!(),
+            syn::Fields::Unit => {
+                generate_for_unit_struct(&name, &item.generics.const_params().collect::<Vec<_>>())
+                    .into()
+            }
         },
         syn::Data::Enum(enm) => todo!(),
         syn::Data::Union(_) => panic!("Burrow may not be implemented for `union` types"),
@@ -97,6 +100,21 @@ fn generate_for_tuple_struct(
                 #name (
                     #(self.#fields.into_static(),)*
                 )
+            }
+        }
+    }
+}
+
+fn generate_for_unit_struct(name: &Ident, const_params: &[&ConstParam]) -> TokenStream {
+    if !const_params.is_empty() {
+        unimplemented!("const params are not yet supported");
+    }
+    quote! {
+        impl ::burrow::Burrow for #name {
+            type OwnedSelf = #name;
+
+            fn into_static(self) -> Self::OwnedSelf {
+                #name
             }
         }
     }
