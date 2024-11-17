@@ -17,29 +17,11 @@ pub struct Bar<'a, 'b, T: Clone>(Cow<'a, str>, Cow<'b, T>, usize, String);
 pub struct Unit;
 
 #[derive(Burrow)]
-pub enum Enumeration {
-    A,
+pub enum Enumeration<'a, 'b, T: Clone> {
+    A(String),
     B,
-    C,
+    C(Cow<'a, str>, Cow<'b, T>),
 }
-
-// pub enum Enumeration<'a, 'b, T: Clone> {
-//     A(String),
-//     B,
-//     C(Cow<'a, str>, Cow<'b, T>),
-// }
-
-// impl<T: Clone + 'static> Burrow for Enumeration<'_, '_, T> {
-//     type OwnedSelf = Enumeration<'static, 'static, T>;
-
-//     fn into_static(self) -> Self::OwnedSelf {
-//         match self {
-//             Enumeration::A(x0) => Enumeration::A(x0.into_static()),
-//             Enumeration::B => Enumeration::B,
-//             Enumeration::C(x0, x1) => Enumeration::C(x0.into_static(), x1.into_static()),
-//         }
-//     }
-// }
 
 #[allow(dead_code)]
 fn it_works_1(b: Foo<'_, '_, String>) -> Foo<'static, 'static, String> {

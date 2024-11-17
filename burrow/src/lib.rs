@@ -26,12 +26,16 @@ blanket_owned!(u32);
 blanket_owned!(u64);
 blanket_owned!(u128);
 blanket_owned!(usize);
+
 blanket_owned!(i8);
 blanket_owned!(i16);
 blanket_owned!(i32);
 blanket_owned!(i64);
 blanket_owned!(i128);
 blanket_owned!(isize);
+
+blanket_owned!(f32);
+blanket_owned!(f64);
 
 mod util {
     #[macro_export]

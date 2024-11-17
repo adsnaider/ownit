@@ -1,4 +1,4 @@
-use proc_macro2::{Ident, TokenStream};
+use proc_macro2::{Ident, Span, TokenStream};
 use quote::{quote, ToTokens, TokenStreamExt};
 use syn::{parse_macro_input, ConstParam, DataStruct, DeriveInput, TypeParam, Variant};
 
@@ -137,23 +137,36 @@ struct MatchArm<'a> {
 impl ToTokens for MatchArm<'_> {
     fn to_tokens(&self, tokens: &mut TokenStream) {
         let name = &self.variant.ident;
-        dbg!(name);
         let lhs = {
             match &self.variant.fields {
                 syn::Fields::Named(_) => todo!(),
-                syn::Fields::Unnamed(f) => todo!(),
+                syn::Fields::Unnamed(f) => {
+                    let fields = f.unnamed.iter().count();
+                    let names =
+                        (0..fields).map(|i| syn::Ident::new(&format!("x{i}"), Span::call_site()));
+                    quote! {
+                        (#(#names,)*)
+                    }
+                }
                 syn::Fields::Unit => quote! {},
             }
         };
         let rhs = {
             match &self.variant.fields {
                 syn::Fields::Named(_) => todo!(),
-                syn::Fields::Unnamed(_) => todo!(),
+                syn::Fields::Unnamed(f) => {
+                    let fields = f.unnamed.iter().count();
+                    let names =
+                        (0..fields).map(|i| syn::Ident::new(&format!("x{i}"), Span::call_site()));
+                    quote! {
+                        (#(#names.into_static(),)*)
+                    }
+                }
                 syn::Fields::Unit => quote! {},
             }
         };
         tokens.append_all(quote! {
-            Self::#name #lhs => Self::#name #rhs
+            Self::#name #lhs => Self::OwnedSelf::#name #rhs
         })
     }
 }
