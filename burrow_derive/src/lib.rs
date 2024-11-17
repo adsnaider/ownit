@@ -139,7 +139,12 @@ impl ToTokens for MatchArm<'_> {
         let name = &self.variant.ident;
         let lhs = {
             match &self.variant.fields {
-                syn::Fields::Named(_) => todo!(),
+                syn::Fields::Named(f) => {
+                    let fields = f.named.iter().map(|f| f.ident.as_ref().unwrap());
+                    quote! {
+                        {#(#fields,)*}
+                    }
+                }
                 syn::Fields::Unnamed(f) => {
                     let fields = f.unnamed.iter().count();
                     let names =
@@ -153,7 +158,12 @@ impl ToTokens for MatchArm<'_> {
         };
         let rhs = {
             match &self.variant.fields {
-                syn::Fields::Named(_) => todo!(),
+                syn::Fields::Named(f) => {
+                    let fields = f.named.iter().map(|f| f.ident.as_ref().unwrap());
+                    quote! {
+                        {#(#fields: #fields.into_static(),)*}
+                    }
+                }
                 syn::Fields::Unnamed(f) => {
                     let fields = f.unnamed.iter().count();
                     let names =

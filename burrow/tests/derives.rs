@@ -7,6 +7,7 @@ pub struct Foo<'a, 'b, T: Clone> {
     nothinga: Cow<'a, str>,
     nothingb: Cow<'b, T>,
     foo: usize,
+    baz: f64,
     bar: String,
 }
 
@@ -21,6 +22,7 @@ pub enum Enumeration<'a, 'b, T: Clone> {
     A(String),
     B,
     C(Cow<'a, str>, Cow<'b, T>),
+    D { foo: Cow<'a, str>, bar: Cow<'b, T> },
 }
 
 #[allow(dead_code)]
