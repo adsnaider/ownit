@@ -1,6 +1,6 @@
 use proc_macro2::{Ident, TokenStream};
-use quote::{quote, ToTokens};
-use syn::{parse_macro_input, ConstParam, DataStruct, DeriveInput, TypeParam};
+use quote::{quote, ToTokens, TokenStreamExt};
+use syn::{parse_macro_input, ConstParam, DataStruct, DeriveInput, TypeParam, Variant};
 
 #[proc_macro_derive(Burrow)]
 pub fn derive_burrow(item: proc_macro::TokenStream) -> proc_macro::TokenStream {
@@ -37,7 +37,17 @@ pub fn derive_burrow(item: proc_macro::TokenStream) -> proc_macro::TokenStream {
                     .into()
             }
         },
-        syn::Data::Enum(enm) => todo!(),
+        syn::Data::Enum(enm) => {
+            let variants = enm.variants.iter().collect::<Vec<_>>();
+            generate_for_enum(
+                &name,
+                lifetimes.len(),
+                &item.generics.type_params().collect::<Vec<_>>(),
+                &item.generics.const_params().collect::<Vec<_>>(),
+                &variants,
+            )
+            .into()
+        }
         syn::Data::Union(_) => panic!("Burrow may not be implemented for `union` types"),
     }
 }
@@ -115,6 +125,62 @@ fn generate_for_unit_struct(name: &Ident, const_params: &[&ConstParam]) -> Token
 
             fn into_static(self) -> Self::OwnedSelf {
                 #name
+            }
+        }
+    }
+}
+
+struct MatchArm<'a> {
+    variant: &'a Variant,
+}
+
+impl ToTokens for MatchArm<'_> {
+    fn to_tokens(&self, tokens: &mut TokenStream) {
+        let name = &self.variant.ident;
+        dbg!(name);
+        let lhs = {
+            match &self.variant.fields {
+                syn::Fields::Named(_) => todo!(),
+                syn::Fields::Unnamed(f) => todo!(),
+                syn::Fields::Unit => quote! {},
+            }
+        };
+        let rhs = {
+            match &self.variant.fields {
+                syn::Fields::Named(_) => todo!(),
+                syn::Fields::Unnamed(_) => todo!(),
+                syn::Fields::Unit => quote! {},
+            }
+        };
+        tokens.append_all(quote! {
+            Self::#name #lhs => Self::#name #rhs
+        })
+    }
+}
+
+fn generate_for_enum(
+    name: &Ident,
+    lifetimes: usize,
+    generics: &[&TypeParam],
+    const_params: &[&ConstParam],
+    variants: &[&Variant],
+) -> TokenStream {
+    let life: Vec<_> = std::iter::repeat(Void).take(lifetimes).collect();
+    if !const_params.is_empty() {
+        unimplemented!("const params are not yet supported");
+    }
+    let generic_names: Vec<_> = generics.iter().map(|g| &g.ident).collect();
+    let matches = variants.iter().map(|variant| MatchArm { variant });
+    quote! {
+        impl<#(#generics + 'static,)*> ::burrow::Burrow for #name<#(#life '_,)*#(#generic_names,)*> {
+            type OwnedSelf = #name<#(#life 'static,)*#(#generic_names,)*>;
+
+            fn into_static(self) -> Self::OwnedSelf {
+                use ::burrow::Burrow;
+
+                match self {
+                    #(#matches,)*
+                }
             }
         }
     }
