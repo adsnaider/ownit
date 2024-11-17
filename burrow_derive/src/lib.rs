@@ -59,9 +59,11 @@ fn generate_for_named_struct(
     if !const_params.is_empty() {
         unimplemented!("const params are not yet supported");
     }
+
+    let generic_names: Vec<_> = generics.iter().map(|g| &g.ident).collect();
     quote! {
-        impl ::burrow::Burrow for #name<#(#life '_,)*#(#generics,)*> {
-            type OwnedSelf = #name<#(#life 'static,)*#(#generics,)*>;
+        impl<#(#generics + 'static,)*>::burrow::Burrow for #name<#(#life '_,)*#(#generic_names,)*> {
+            type OwnedSelf = #name<#(#life 'static,)*#(#generic_names,)*>;
 
             fn into_static(self) -> Self::OwnedSelf {
                 use ::burrow::Burrow;
@@ -85,9 +87,10 @@ fn generate_for_tuple_struct(
         unimplemented!("const params are not yet supported");
     }
     let fields = (0..fields).map(syn::Index::from);
+    let generic_names: Vec<_> = generics.iter().map(|g| &g.ident).collect();
     quote! {
-        impl ::burrow::Burrow for #name<#(#life '_,)*#(#generics,)*> {
-            type OwnedSelf = #name<#(#life 'static,)*#(#generics,)*>;
+        impl<#(#generics + 'static,)*> ::burrow::Burrow for #name<#(#life '_,)*#(#generic_names,)*> {
+            type OwnedSelf = #name<#(#life 'static,)*#(#generic_names,)*>;
 
             fn into_static(self) -> Self::OwnedSelf {
                 use ::burrow::Burrow;
