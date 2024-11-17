@@ -38,3 +38,8 @@ fn it_works_2(b: Bar<'_, '_, String>) -> Bar<'static, 'static, String> {
 fn it_works_3(b: Unit) -> Unit {
     b.into_static()
 }
+
+#[allow(dead_code)]
+fn it_works_4(b: Enumeration<'_, '_, String>) -> Enumeration<'static, 'static, String> {
+    b.into_static()
+}
