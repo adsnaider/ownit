@@ -1,0 +1,3 @@
+[workspace]
+members = ["burrow", "burrow_derive"]
+resolver = "2"
