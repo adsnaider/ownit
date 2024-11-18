@@ -4,7 +4,7 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-burrow_derive = { path = "../burrow_derive", optional = true }
+burrow_derive = { path = "../burrow_derive", version = "0.1.0", optional = true }
 
 [features]
 default = ["derive"]
