@@ -10,9 +10,9 @@ repository = "https://github.com/adsnaider/burrow"
 readme = "README.md"
 categories = ["rust-patterns"]
 authors = ["Adam Snaider <adsnaider@gmail.com>"]
-version = "0.0.0"
+version = "0.1.0"
 edition = "2021"
 
 [workspace.dependencies]
-burrow = { path = "burrow", version = "0.0.0" }
-burrow_derive = { path = "burrow_derive", version = "0.0.0" }
+burrow = { path = "burrow", version = "0.1.0" }
+burrow_derive = { path = "burrow_derive", version = "0.1.0" }

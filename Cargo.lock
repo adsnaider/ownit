@@ -4,14 +4,14 @@ version = 3
 
 [[package]]
 name = "burrow"
-version = "0.0.0"
+version = "0.1.0"
 dependencies = [
  "burrow_derive",
 ]
 
 [[package]]
 name = "burrow_derive"
-version = "0.0.0"
+version = "0.1.0"
 dependencies = [
  "proc-macro2",
  "quote",
