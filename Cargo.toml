@@ -10,9 +10,9 @@ repository = "https://github.com/adsnaider/ownit"
 readme = "README.md"
 categories = ["rust-patterns"]
 authors = ["Adam Snaider <adsnaider@gmail.com>"]
-version = "0.1.0"
+version = "0.0.0"
 edition = "2021"
 
 [workspace.dependencies]
-ownit = { path = "ownit", version = "0.1.0" }
-ownit-derive = { path = "ownit-derive", version = "0.1.0" }
+ownit = { path = "ownit", version = "0.0.0" }
+ownit-derive = { path = "ownit-derive", version = "0.0.0" }
