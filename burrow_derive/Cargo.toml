@@ -1,7 +1,14 @@
 [package]
 name = "burrow_derive"
-version = "0.1.0"
-edition = "2021"
+description.workspace = true
+documentation.workspace = true
+repository.workspace = true
+readme.workspace = true
+categories.workspace = true
+license.workspace = true
+authors.workspace = true
+version.workspace = true
+edition.workspace = true
 
 [lib]
 proc-macro = true
