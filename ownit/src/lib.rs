@@ -1,6 +1,6 @@
 #![warn(missing_docs)]
 #![forbid(unsafe_code)]
-#![doc = include_str!("../../README.md")]
+#![doc = include_str!(concat!(env!("CARGO_MANIFEST_DIR"), "/README.md"))]
 
 #[cfg(feature = "derive")]
 pub use ownit_derive::Ownit;
