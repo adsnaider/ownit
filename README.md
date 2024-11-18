@@ -1,8 +1,8 @@
-# Burrow
+# Ownit
 
 A derivable trait for converting references to owned values ala [`Cow`](std::borrow::Cow)
 
-This crate presents a trait [`Burrow`], akin to [`ToOwned`] which serves as an extension for
+This crate presents a trait [`Ownit`], akin to [`ToOwned`] which serves as an extension for
 compound borrowed types, allowing them to have references that can be turned into owned values,
 allowing easier use of copy-on-write on these types.
 
@@ -11,9 +11,9 @@ allowing easier use of copy-on-write on these types.
 ```rust
 use std::borrow::Cow;
 
-use burrow::Burrow;
+use ownit::Ownit;
 
-#[derive(Burrow)]
+#[derive(Ownit)]
 pub struct Foo<'a, 'b, T: Clone> {
     nothinga: Cow<'a, str>,
     nothingb: Cow<'b, T>,
@@ -22,13 +22,13 @@ pub struct Foo<'a, 'b, T: Clone> {
     bar: String,
 }
 
-#[derive(Burrow)]
+#[derive(Ownit)]
 pub struct Bar<'a, 'b, T: Clone>(Cow<'a, str>, Cow<'b, T>, usize, String);
 
-#[derive(Burrow)]
+#[derive(Ownit)]
 pub struct Unit;
 
-#[derive(Burrow)]
+#[derive(Ownit)]
 pub enum Enumeration<'a, 'b, T: Clone> {
     A(String),
     B,

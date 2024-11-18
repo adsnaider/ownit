@@ -2,8 +2,8 @@ use proc_macro2::{Ident, Span, TokenStream};
 use quote::{quote, ToTokens, TokenStreamExt};
 use syn::{parse_macro_input, ConstParam, DataStruct, DeriveInput, TypeParam, Variant};
 
-#[proc_macro_derive(Burrow)]
-pub fn derive_burrow(item: proc_macro::TokenStream) -> proc_macro::TokenStream {
+#[proc_macro_derive(Ownit)]
+pub fn derive_ownit(item: proc_macro::TokenStream) -> proc_macro::TokenStream {
     let item = parse_macro_input!(item as DeriveInput);
     let lifetimes: Vec<_> = item.generics.lifetimes().collect();
 
@@ -48,7 +48,7 @@ pub fn derive_burrow(item: proc_macro::TokenStream) -> proc_macro::TokenStream {
             )
             .into()
         }
-        syn::Data::Union(_) => panic!("Burrow may not be implemented for `union` types"),
+        syn::Data::Union(_) => panic!("Ownit may not be implemented for `union` types"),
     }
 }
 
@@ -75,11 +75,11 @@ fn generate_for_named_struct(
 
     let generic_names: Vec<_> = generics.iter().map(|g| &g.ident).collect();
     quote! {
-        impl<#(#generics + 'static,)*>::burrow::Burrow for #name<#(#life '_,)*#(#generic_names,)*> {
+        impl<#(#generics + 'static,)*>::ownit::Ownit for #name<#(#life '_,)*#(#generic_names,)*> {
             type OwnedSelf = #name<#(#life 'static,)*#(#generic_names,)*>;
 
             fn into_static(self) -> Self::OwnedSelf {
-                use ::burrow::Burrow;
+                use ::ownit::Ownit;
                 #name {
                     #(#fields: self.#fields.into_static(),)*
                 }
@@ -102,11 +102,11 @@ fn generate_for_tuple_struct(
     let fields = (0..fields).map(syn::Index::from);
     let generic_names: Vec<_> = generics.iter().map(|g| &g.ident).collect();
     quote! {
-        impl<#(#generics + 'static,)*> ::burrow::Burrow for #name<#(#life '_,)*#(#generic_names,)*> {
+        impl<#(#generics + 'static,)*> ::ownit::Ownit for #name<#(#life '_,)*#(#generic_names,)*> {
             type OwnedSelf = #name<#(#life 'static,)*#(#generic_names,)*>;
 
             fn into_static(self) -> Self::OwnedSelf {
-                use ::burrow::Burrow;
+                use ::ownit::Ownit;
                 #name (
                     #(self.#fields.into_static(),)*
                 )
@@ -120,7 +120,7 @@ fn generate_for_unit_struct(name: &Ident, const_params: &[&ConstParam]) -> Token
         unimplemented!("const params are not yet supported");
     }
     quote! {
-        impl ::burrow::Burrow for #name {
+        impl ::ownit::Ownit for #name {
             type OwnedSelf = #name;
 
             fn into_static(self) -> Self::OwnedSelf {
@@ -195,11 +195,11 @@ fn generate_for_enum(
     let generic_names: Vec<_> = generics.iter().map(|g| &g.ident).collect();
     let matches = variants.iter().map(|variant| MatchArm { variant });
     quote! {
-        impl<#(#generics + 'static,)*> ::burrow::Burrow for #name<#(#life '_,)*#(#generic_names,)*> {
+        impl<#(#generics + 'static,)*> ::ownit::Ownit for #name<#(#life '_,)*#(#generic_names,)*> {
             type OwnedSelf = #name<#(#life 'static,)*#(#generic_names,)*>;
 
             fn into_static(self) -> Self::OwnedSelf {
-                use ::burrow::Burrow;
+                use ::ownit::Ownit;
 
                 match self {
                     #(#matches,)*

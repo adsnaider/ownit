@@ -1,5 +1,5 @@
 [package]
-name = "burrow_derive"
+name = "ownit-derive"
 description.workspace = true
 documentation.workspace = true
 repository.workspace = true

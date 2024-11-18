@@ -1,12 +1,12 @@
 [workspace]
-members = ["burrow", "burrow_derive"]
+members = ["ownit", "ownit-derive"]
 resolver = "2"
 
 [workspace.package]
 description = "Easily turn borrowed type into owned values"
-documentation = "https://docs.rs/burrow"
+documentation = "https://docs.rs/ownit"
 license = "MIT OR Apache-2.0"
-repository = "https://github.com/adsnaider/burrow"
+repository = "https://github.com/adsnaider/ownit"
 readme = "README.md"
 categories = ["rust-patterns"]
 authors = ["Adam Snaider <adsnaider@gmail.com>"]
@@ -14,5 +14,5 @@ version = "0.1.0"
 edition = "2021"
 
 [workspace.dependencies]
-burrow = { path = "burrow", version = "0.1.0" }
-burrow_derive = { path = "burrow_derive", version = "0.1.0" }
+ownit = { path = "ownit", version = "0.1.0" }
+ownit-derive = { path = "ownit-derive", version = "0.1.0" }

@@ -1,8 +1,8 @@
 use std::borrow::Cow;
 
-use burrow::Burrow;
+use ownit::Ownit;
 
-#[derive(Burrow)]
+#[derive(Ownit)]
 pub struct Foo<'a, 'b, T: Clone> {
     nothinga: Cow<'a, str>,
     nothingb: Cow<'b, T>,
@@ -11,13 +11,13 @@ pub struct Foo<'a, 'b, T: Clone> {
     bar: String,
 }
 
-#[derive(Burrow)]
+#[derive(Ownit)]
 pub struct Bar<'a, 'b, T: Clone>(Cow<'a, str>, Cow<'b, T>, usize, String);
 
-#[derive(Burrow)]
+#[derive(Ownit)]
 pub struct Unit;
 
-#[derive(Burrow)]
+#[derive(Ownit)]
 pub enum Enumeration<'a, 'b, T: Clone> {
     A(String),
     B,

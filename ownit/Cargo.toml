@@ -1,5 +1,5 @@
 [package]
-name = "burrow"
+name = "ownit"
 description.workspace = true
 documentation.workspace = true
 repository.workspace = true
@@ -12,8 +12,8 @@ edition.workspace = true
 
 
 [dependencies]
-burrow_derive = { workspace = true, optional = true }
+ownit-derive = { workspace = true, optional = true }
 
 [features]
 default = ["derive"]
-derive = ["dep:burrow_derive"]
+derive = ["dep:ownit-derive"]

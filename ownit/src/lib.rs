@@ -3,10 +3,10 @@
 #![doc = include_str!("../../README.md")]
 
 #[cfg(feature = "derive")]
-pub use burrow_derive::Burrow;
+pub use ownit_derive::Ownit;
 
 /// Trait akin to [`ToOwned`] but more general in practice.
-pub trait Burrow {
+pub trait Ownit {
     /// Owned version of self.
     ///
     /// Generally this is going to be the type itself but with 'static lifetimes
@@ -18,7 +18,7 @@ pub trait Burrow {
 }
 
 mod impls {
-    use super::Burrow;
+    use super::Ownit;
     use std::{
         borrow::Cow,
         path::PathBuf,
@@ -32,7 +32,7 @@ mod impls {
 
     macro_rules! blanket_owned {
         ($ty:ident) => {
-            impl Burrow for $ty {
+            impl Ownit for $ty {
                 type OwnedSelf = $ty;
 
                 fn into_static(self) -> Self::OwnedSelf {
@@ -41,7 +41,7 @@ mod impls {
             }
         };
         ($ty:ident<..>) => {
-            impl<T: 'static> Burrow for $ty<T> {
+            impl<T: 'static> Ownit for $ty<T> {
                 type OwnedSelf = $ty<T>;
 
                 fn into_static(self) -> Self::OwnedSelf {
@@ -51,7 +51,7 @@ mod impls {
         };
     }
 
-    impl<T: ToOwned + ?Sized + 'static> Burrow for Cow<'_, T> {
+    impl<T: ToOwned + ?Sized + 'static> Ownit for Cow<'_, T> {
         type OwnedSelf = Cow<'static, T>;
 
         fn into_static(self) -> Self::OwnedSelf {
@@ -59,7 +59,7 @@ mod impls {
         }
     }
 
-    impl<T: Burrow> Burrow for Vec<T> {
+    impl<T: Ownit> Ownit for Vec<T> {
         type OwnedSelf = Vec<T::OwnedSelf>;
 
         fn into_static(self) -> Self::OwnedSelf {
@@ -67,7 +67,7 @@ mod impls {
         }
     }
 
-    impl<T: Burrow> Burrow for Box<T> {
+    impl<T: Ownit> Ownit for Box<T> {
         type OwnedSelf = Box<T::OwnedSelf>;
 
         fn into_static(self) -> Self::OwnedSelf {
@@ -76,15 +76,15 @@ mod impls {
         }
     }
 
-    impl<T: Burrow> Burrow for Option<T> {
+    impl<T: Ownit> Ownit for Option<T> {
         type OwnedSelf = Option<T::OwnedSelf>;
 
         fn into_static(self) -> Self::OwnedSelf {
-            self.map(Burrow::into_static)
+            self.map(Ownit::into_static)
         }
     }
 
-    impl<T: Burrow, E: Burrow> Burrow for Result<T, E> {
+    impl<T: Ownit, E: Ownit> Ownit for Result<T, E> {
         type OwnedSelf = Result<T::OwnedSelf, E::OwnedSelf>;
 
         fn into_static(self) -> Self::OwnedSelf {
@@ -95,7 +95,7 @@ mod impls {
         }
     }
 
-    impl<T: Burrow + Clone> Burrow for Rc<T> {
+    impl<T: Ownit + Clone> Ownit for Rc<T> {
         type OwnedSelf = Rc<T::OwnedSelf>;
 
         fn into_static(self) -> Self::OwnedSelf {
@@ -103,7 +103,7 @@ mod impls {
             Rc::new(inner.into_static())
         }
     }
-    impl Burrow for () {
+    impl Ownit for () {
         type OwnedSelf = ();
 
         fn into_static(self) -> Self::OwnedSelf {
@@ -111,11 +111,11 @@ mod impls {
         }
     }
 
-    impl<const N: usize, T: Burrow> Burrow for [T; N] {
+    impl<const N: usize, T: Ownit> Ownit for [T; N] {
         type OwnedSelf = [T::OwnedSelf; N];
 
         fn into_static(self) -> Self::OwnedSelf {
-            self.map(Burrow::into_static)
+            self.map(Ownit::into_static)
         }
     }
 
